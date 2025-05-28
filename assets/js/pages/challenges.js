@@ -261,34 +261,55 @@ function getSolves(id) {
 
 function loadChals() {
   return CTFd.api.get_challenge_list().then(function(response) {
+    const desiredOrder = [
+      "misc", "web", "crypto", "pwn", "reverse"
+    ].map(c => c.toLowerCase());
+
     const categories = [];
     const $challenges_board = $("#challenges-board");
     challenges = response.data;
 
     $challenges_board.empty();
 
-    for (let i = challenges.length - 1; i >= 0; i--) {
-      if ($.inArray(challenges[i].category, categories) == -1) {
-        const category = challenges[i].category;
-        categories.push(category);
-
-        const categoryid = category.replace(/ /g, "-").hashCode();
-        const categoryrow = $(
-          "" +
-            '<div id="{0}-row" class="pt-5">'.format(categoryid) +
-            '<div class="category-header col-md-12 mb-3">' +
-            "</div>" +
-            '<div class="category-challenges col-md-12">' +
-            '<div class="challenges-row col-md-12"></div>' +
-            "</div>" +
-            "</div>"
-        );
-        categoryrow
-          .find(".category-header")
-          .append($("<h3>" + category + "</h3>"));
-
-        $challenges_board.append(categoryrow);
+    for (let i = 0; i < challenges.length; i++) {
+      if (!categories.includes(challenges[i].category)) {
+        categories.push(challenges[i].category);
       }
+    }
+
+    categories.sort((a, b) => {
+      const aLower = a.toLowerCase();
+      const bLower = b.toLowerCase();
+      
+      const indexA = desiredOrder.findIndex(c => aLower.includes(c));
+      const indexB = desiredOrder.findIndex(c => bLower.includes(c));
+      
+      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      
+      return indexA - indexB;
+    });
+
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories[i];
+      const categoryid = category.replace(/ /g, "-").hashCode();
+      const categoryrow = $(
+        "" +
+          '<div id="{0}-row" class="pt-5">'.format(categoryid) +
+          '<div class="category-header col-md-12 mb-3">' +
+          "</div>" +
+          '<div class="category-challenges col-md-12">' +
+          '<div class="challenges-row col-md-12"></div>' +
+          "</div>" +
+          "</div>"
+      );
+      categoryrow
+        .find(".category-header")
+        .append($("<h3>" + category + "</h3>"));
+
+      $challenges_board.append(categoryrow);
+    }
     }
 
     for (let i = 0; i <= challenges.length - 1; i++) {
