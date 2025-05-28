@@ -33,3 +33,4 @@ That's it! Now you are good to goo..
 ## Credits
 - [Freepik](https://www.freepik.com "Freepik") For their awesome images (Arrow & Coin).
 - [CTFd](https://github.com/CTFd "CTFd") For Creating such an Awesome Platform.
+- [benjamin](https://github.com/b3nj4m1no) For ordering challenge categories (Misc, Web, Crypto, Pwn, Reverse) in `assets/js/pages/challenges.js`
